@@ -1,5 +1,7 @@
-🛒 Zepto Product Analytics Dashboard | SQL + Power BI
+###🛒 Zepto Product Analytics Dashboard | SQL + Power BI
+
 📌 Project Overview
+
 This project analyzes Zepto product data to uncover insights related to revenue, stock availability, discounts, and category performance using MySQL and Power BI.
 The goal is to simulate a real-world Data Analyst workflow:
 Raw data ingestion
