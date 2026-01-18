@@ -1,0 +1,40 @@
+-- Select Database
+USE analyst_db;
+
+-- Create Clean Table
+CREATE TABLE zepto_products_clean AS
+SELECT
+    Category,
+    name,
+    CAST(NULLIF(REPLACE(mrp, ',', ''), '') AS DECIMAL(10,2)) AS mrp,
+    CAST(NULLIF(REPLACE(discountPercent, '%', ''), '') AS DECIMAL(5,2)) AS discount_percent,
+    CAST(NULLIF(availableQuantity, '') AS SIGNED) AS available_quantity,
+    CAST(NULLIF(REPLACE(discountedSellingPrice, ',', ''), '') AS DECIMAL(10,2)) AS selling_price,
+    CAST(NULLIF(weightInGms, '') AS SIGNED) AS weight_gms,
+    CASE
+        WHEN outOfStock = 'TRUE' THEN 1
+        ELSE 0
+    END AS out_of_stock,
+    CAST(NULLIF(quantity, '') AS SIGNED) AS quantity
+FROM zepto_products;
+
+-- Fix Invalid Discount Values
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE zepto_products_clean
+SET discount_percent = 100
+WHERE discount_percent > 100;
+
+SET SQL_SAFE_UPDATES = 1;
+
+-- Revenue Check
+SELECT SUM(selling_price * quantity) AS total_revenue
+FROM zepto_products_clean;
+
+-- Category-wise Revenue
+SELECT
+    Category,
+    SUM(selling_price * quantity) AS category_revenue
+FROM zepto_products_clean
+GROUP BY Category
+ORDER BY category_revenue DESC;
